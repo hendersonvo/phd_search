@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PhD Programs — Urban Ecohydrology / Urban Forestry / Climate Change</title>
+<style>
+  :root {
+    --color-text-primary: #1a1a1a;
+    --color-text-secondary: #4a4a4a;
+    --color-text-tertiary: #888;
+    --color-background: #f9f8f6;
+    --color-background-secondary: #f1efea;
+    --color-border: #e0ddd6;
+    --color-accent: #0F6E56;
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-text-primary: #f0ede8;
+      --color-text-secondary: #b8b4ac;
+      --color-text-tertiary: #777;
+      --color-background: #1a1918;
+      --color-background-secondary: #242220;
+      --color-border: #333;
+      --color-accent: #5DCAA5;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--color-background); color: var(--color-text-primary); min-height: 100vh; }
+  .page-container { max-width: 720px; margin: 0 auto; padding: 32px 16px 64px; }
+  .page-header { margin-bottom: 24px; }
+  .page-title { font-size: 22px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 4px; }
+  .page-subtitle { font-size: 13px; color: var(--color-text-tertiary); line-height: 1.5; }
+  .filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+  .filter-btn { font-size: 12px; font-weight: 500; padding: 5px 11px; border-radius: 20px; border: 1.5px solid var(--color-border); background: transparent; color: var(--color-text-secondary); cursor: pointer; transition: all .15s; }
+  .filter-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+  .filter-btn.active { background: var(--color-accent); border-color: var(--color-accent); color: #fff; }
+  .programs { display: flex; flex-direction: column; gap: 10px; }
+  .card { background: var(--color-background-secondary); border: 1.5px solid var(--color-border); border-radius: var(--border-radius-lg); padding: 14px 16px; cursor: pointer; transition: border-color .15s; }
+  .card:hover { border-color: var(--color-accent); }
+  .card.is-standout { border-color: #9FE1CB; border-width: 1.5px; }
+  @media (prefers-color-scheme: dark) { .card.is-standout { border-color: #0F6E56; } }
+  .card-top { display: flex; align-items: flex-start; gap: 10px; justify-content: space-between; }
+  .card-left { flex: 1; }
+  .school-name { font-size: 15px; font-weight: 500; color: var(--color-text-primary); line-height: 1.3; }
+  .program-name { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+  .badges { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 6px; }
+  .badge { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 20px; display: inline-block; }
+  .b-reach   { background: #FEE2E2; color: #991B1B; }
+  .b-target  { background: #E0F2FE; color: #0C4A6E; }
+  .b-safe    { background: #DCFCE7; color: #14532D; }
+  .b-ca      { background: #FEF3C7; color: #78350F; }
+  .b-us      { background: #F3F4F6; color: #374151; }
+  .b-standout{ background: #D1FAE5; color: #065F46; }
+  .b-urban   { background: #EDE9FE; color: #4C1D95; }
+  .b-eco     { background: #E0F2FE; color: #0C4A6E; }
+  .b-forest  { background: #D1FAE5; color: #065F46; }
+  .b-climate { background: #FEE2E2; color: #991B1B; }
+  @media (prefers-color-scheme: dark) {
+    .b-reach   { background: #450a0a; color: #fca5a5; }
+    .b-target  { background: #082f49; color: #7dd3fc; }
+    .b-safe    { background: #052e16; color: #86efac; }
+    .b-ca      { background: #422006; color: #fcd34d; }
+    .b-us      { background: #1f2937; color: #d1d5db; }
+    .b-standout{ background: #022c22; color: #6ee7b7; }
+    .b-urban   { background: #2e1065; color: #c4b5fd; }
+    .b-eco     { background: #082f49; color: #7dd3fc; }
+    .b-forest  { background: #022c22; color: #6ee7b7; }
+    .b-climate { background: #450a0a; color: #fca5a5; }
+  }
+  .meta { font-size: 11px; color: var(--color-text-tertiary); white-space: nowrap; padding-top: 2px; flex-shrink: 0; }
+  .chevron { font-size: 10px; color: var(--color-text-tertiary); transition: transform .2s; flex-shrink: 0; padding-top: 3px; }
+  .chevron.open { transform: rotate(90deg); }
+  .card-detail { display: none; padding-top: 14px; }
+  .card-detail.open { display: block; }
+  .detail-section { margin-bottom: 12px; }
+  .detail-section:last-child { margin-bottom: 0; }
+  .detail-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--color-text-tertiary); margin-bottom: 4px; }
+  .detail-text { font-size: 13px; color: var(--color-text-secondary); line-height: 1.55; }
+  .faculty-list { display: flex; flex-direction: column; gap: 6px; margin-top: 2px; }
+  .faculty-item { font-size: 13px; color: var(--color-text-secondary); line-height: 1.4; }
+  .faculty-name { font-weight: 500; color: var(--color-text-primary); }
+  .faculty-item.is-standout-faculty .faculty-name { color: #0F6E56; }
+  @media (prefers-color-scheme: dark) { .faculty-item.is-standout-faculty .faculty-name { color: #5DCAA5; } }
+  .standout-reason { font-size: 12px; color: #0F6E56; margin-top: 3px; font-style: italic; line-height: 1.4; }
+  @media (prefers-color-scheme: dark) { .standout-reason { color: #5DCAA5; } }
+  .no-results { font-size: 13px; color: var(--color-text-tertiary); padding: 20px 0; text-align: center; }
+  @media (max-width: 560px) { .meta { display: none; } }
+</style>
+</head>
+<body>
+<div class="page-container">
+  <div class="page-header">
+    <h1 class="page-title">PhD programs</h1>
+    <p class="page-subtitle">Urban ecohydrology · Urban forestry · Environmental science · Climate change responses &nbsp;·&nbsp; Click any card to expand</p>
+  </div>
+
+  <div class="filters" id="filters">
+    <button class="filter-btn active" data-filter="all">All programs</button>
+    <button class="filter-btn" data-filter="standout">Standouts</button>
+    <button class="filter-btn" data-filter="ca">California only</button>
+    <button class="filter-btn" data-filter="reach">Reach</button>
+    <button class="filter-btn" data-filter="target">Target</button>
+    <button class="filter-btn" data-filter="safe">Likely</button>
+  </div>
+
+  <div class="programs" id="programs"></div>
+</div>
+
+<script>
+const programs = [
+  {
+    school: "UC Berkeley",
+    program: "PhD in Environmental Science, Policy & Management (ESPM)",
+    location: "Berkeley, CA",
+    tier: "reach", ca: true, standout: true,
+    why: "ESPM is globally ranked #1 in environmental sciences and is one of the most directly relevant programs for urban ecohydrology and climate change. Berkeley is in the heart of the Bay Area metro. The department's Landscape Architecture & Environmental Planning group bridges urban ecology and design with rigorous environmental science — a rare combination. The CAL Fire-urban interface and Bay-Delta wetland systems give you unparalleled fieldwork proximity.",
+    fit: "Iryna Dronova's lab is an exceptional standout — she is the only faculty member at a California research university with an explicit, active research program spanning urban ecosystems, wetlands, and landscape ecology via remote sensing. Paolo D'Odorico's ecohydrology work (stochastic dynamics, water-vegetation feedbacks) bridges beautifully with climate change. Trevor Keenan leads the land-atmosphere interaction side with a global change and carbon cycle focus. This is one of the best combinations in the US for your stated interests.",
+    faculty: [
+      { name: "Iryna Dronova", focus: "Landscape ecology, wetlands, urban ecosystems, remote sensing, urban green infrastructure and climate adaptation", standout: true, reason: "The most direct faculty match in California for urban ecohydrology + urban ecosystems. Active publications in 2024–2025 on urban green space and wetland phenology. Lab bridges landscape architecture, ecological restoration, and environmental planning — rare and directly relevant." },
+      { name: "Paolo D'Odorico", focus: "Ecohydrology, surface hydrology, aeolian processes, stochastic nonlinear environmental dynamics, water and food security", standout: true, reason: "One of the foremost ecohydrologists in the US — his stochastic ecohydrology framework is foundational to the field. Strong climate-vegetation-water intersection." },
+      { name: "Trevor Keenan", focus: "Global change, natural climate solutions, dynamic vegetation, carbon cycle, ecophysiology, land-atmosphere interactions, remote sensing", standout: false },
+      { name: "Todd Dawson", focus: "Physiological plant ecology, stable isotope ecology, biogeochemistry, hydrology, water use by trees", standout: false }
+    ]
+  },
+  {
+    school: "UCLA",
+    program: "PhD in Environment & Sustainability (IoES) or Ecology & Evolutionary Biology",
+    location: "Los Angeles, CA",
+    tier: "reach", ca: true, standout: true,
+    why: "UCLA's IoES is the most urban-ecology-focused program in the UC system, located in the nation's second-largest metro. Los Angeles is ground zero for urban forestry, urban heat island research, and water management challenges under climate change. The program explicitly studies LA's urban tree canopy, stormwater, and urban green infrastructure — your interests and the city's challenges are directly aligned.",
+    fit: "Thomas Gillespie is a standout: he has done foundational work on the Los Angeles urban forest (remote sensing of tree cover, urban biodiversity, species vulnerability to climate change) and is at the UCDAVIS/USDA collaboration on school heat and tree cover. Stephanie Pincetl is the foremost expert on LA urban ecology policy and has written extensively on urban forestry, water management, and climate adaptation. Greg Okin adds the ecohydrology-remote sensing side for dryland CA systems.",
+    faculty: [
+      { name: "Thomas Gillespie", focus: "Remote sensing, urban forestry, urban biodiversity, climate vulnerability of Southern CA trees, landscape ecology", standout: true, reason: "Has done landmark research on the urban forest of Los Angeles, including time-series remote sensing of tree cover and climate vulnerability of native Southern CA species — directly aligned with urban forestry and climate change interests." },
+      { name: "Stephanie Pincetl", focus: "Urban ecology policy, urban metabolism, urban forestry management, water policy, climate adaptation in cities", standout: true, reason: "Founding Director of the California Center for Sustainable Communities and co-author of foundational work on urban tree planting in LA. The expert on coupled urban ecology and policy in California." },
+      { name: "Greg Okin", focus: "Dryland ecohydrology, dust, land degradation, aeolian processes, remote sensing, climate change", standout: false },
+      { name: "Lawren Sack", focus: "Plant ecophysiology, water-use efficiency, hydraulic architecture, climate stress on urban and native trees", standout: false }
+    ]
+  },
+  {
+    school: "UC Irvine",
+    program: "PhD in Earth System Science (ESS) or Ecology & Evolutionary Biology (EEB)",
+    location: "Irvine, CA",
+    tier: "target", ca: true, standout: true,
+    why: "UCI's ESS program is explicitly organized around the causes and consequences of climate change, with strong terrestrial ecohydrology and land-atmosphere faculty. Irvine is in suburban Orange County — coastal, not rural. The Loma Ridge Global Change Experiment run by Goulden is one of the only long-running climate manipulation experiments in Southern CA, directly studying ecohydrological and carbon responses to warming and drought. For urban forestry, Diane Pataki (now at ASU) built her seminal LA urban forest ecohydrology program at UCI — her network of UCI collaborators remains strong.",
+    fit: "Michael Goulden leads the Loma Ridge experiment and publishes actively on CA wildfire and forest carbon. Angela Rigden has ecohydrology explicitly in her research profile with active PhD students in land-atmosphere interactions and ET under climate change. Travis Huxman covers dryland-to-urban plant-water physiology, which bridges directly to urban tree responses to climate stress.",
+    faculty: [
+      { name: "Michael Goulden", focus: "Terrestrial ecosystem carbon and water fluxes, climate change, wildfire, Southern CA grassland and shrubland ecohydrology, eddy covariance", standout: true, reason: "Runs the Loma Ridge Global Change Experiment — a long-term field manipulation in Southern CA studying ecosystem ecohydrological responses to climate change. Actively publishing in 2025 on CA wildfire and forest carbon." },
+      { name: "Angela Rigden", focus: "Ecohydrology, land-atmosphere interactions, plant physiology, evapotranspiration, climate change, remote sensing", standout: true, reason: "Assistant professor with ecohydrology explicitly in her keywords. Active lab with current PhD students focused on how climate change alters the water cycle and evapotranspiration." },
+      { name: "Travis Huxman", focus: "Plant ecophysiology, ecohydrology, dryland ecosystem function, global change, carbon-water coupling", standout: false },
+      { name: "James Randerson", focus: "Global carbon cycle, climate-carbon feedbacks, wildfire, land use change, remote sensing", standout: false }
+    ]
+  },
+  {
+    school: "UC Davis",
+    program: "Graduate Group in Ecology (GGE) or Hydrologic Sciences Graduate Group (HSGG)",
+    location: "Davis, CA",
+    tier: "target", ca: true, standout: true,
+    why: "UC Davis has an unusual combination of assets for your interests: the Urban Science Lab in the Department of Plant Sciences is one of the only research labs in the US explicitly focused on urban forests and urban plant ecology at a research university. The GGE's Ecosystems & Landscape Ecology track is broad and collaborative. Davis is a college town with direct train access to Sacramento and the Bay Area — not rural.",
+    fit: "The Urban Science Lab pursues research on urban forests, tree-human interactions, urban biodiversity, and urban heat — directly your urban forestry interest. The HSGG is the ecohydrology-specific graduate track with watershed hydrology faculty. The GGE's Valerie Eviner covers plant-soil-water feedbacks under climate change in California grasslands. If urban forestry + ecohydrology in a California context is your core, Davis is one of the best structural fits in the state.",
+    faculty: [
+      { name: "Matteo Garbelotto (ESPM/Berkeley affiliate with Davis collab)", focus: "Forest pathology, urban tree disease, mycology, forest health under climate stress", standout: false },
+      { name: "Urban Science Lab faculty (Dept. Plant Sciences)", focus: "Urban forest ecology, urban tree diversity, heat exposure, urban biodiversity, tree-human interactions in California cities", standout: true, reason: "One of the only dedicated urban forest ecology research labs at a California research university — pursues fieldwork on urban heat, school canopy cover, and human-plant relationships in CA cities." },
+      { name: "Valerie Eviner", focus: "Grassland ecology, plant-soil-water feedbacks, drought, climate change, California rangeland systems", standout: false },
+      { name: "Howard Young (HSGG)", focus: "Watershed hydrology, ecohydrology, land surface processes", standout: false }
+    ]
+  },
+  {
+    school: "UC Santa Barbara",
+    program: "PhD in Geography OR Bren School Environmental Science & Management",
+    location: "Santa Barbara, CA",
+    tier: "target", ca: true, standout: true,
+    why: "UCSB Geography is arguably the strongest department in the US for the intersection of ecohydrology and landscape ecology. If your urban ecohydrology interests extend to the urban-wildland interface and California watershed systems, the UCSB Geography and Bren combination is exceptional. Santa Barbara itself is a mid-size coastal city — not rural. Kelly Caylor is one of the world's leading ecohydrologists and is based here.",
+    fit: "Kelly Caylor is the cornerstone — world-class ecohydrologist who also collaborates on distributed sensor networks, which translate well to urban monitoring work. Christina Tague (Bren) runs RHESSys for watershed-scale ecohydrology modeling under climate change. Joseph McFadden works on urban ecology and land-atmosphere interactions including urban heat — the urban ecology angle within Geography. This is the strongest California option for someone whose urban ecohydrology interests sit at the urban-wildland interface.",
+    faculty: [
+      { name: "Kelly Caylor", focus: "Ecohydrology of drylands, distributed environmental sensing, coupled social-environmental systems, water-vegetation interactions", standout: true, reason: "One of the world's leading ecohydrologists. If he is open to new PhD students, this is an exceptional advisor match for ecohydrology and sensor-based approaches." },
+      { name: "Christina Tague (Bren)", focus: "Ecohydrology, watershed modeling, climate change impacts on water resources, RHESSys", standout: true, reason: "Developer of the RHESSys model for landscape-scale watershed ecohydrology — widely used for climate scenario projections. Co-advisor potential with Caylor." },
+      { name: "Joseph McFadden", focus: "Urban ecology, land-atmosphere interactions, urban land use and land cover change, urban heat, biosphere-atmosphere exchange", standout: true, reason: "A rare California urban ecologist with a hard-science (flux measurement, land-atmosphere) approach to urban vegetation and urban heat — directly bridging ecohydrology and urban forestry." },
+      { name: "Dar Roberts", focus: "Remote sensing of vegetation, spectral ecology, ecophysiology, wildfire", standout: false }
+    ]
+  },
+  {
+    school: "Arizona State University",
+    program: "PhD in Environmental Life Sciences or Sustainability",
+    location: "Tempe/Phoenix, AZ",
+    tier: "target", ca: false, standout: true,
+    why: "ASU has the strongest urban ecohydrology program in the country, bar none. Phoenix is obviously non-rural — it is the fifth-largest US city. The Central Arizona-Phoenix (CAP) LTER is the most data-rich and longest-running urban ecological research program in the world, with decades of hydrology, biogeochemistry, and urban tree canopy data. If urban systems are genuinely central to your interests, no program in the US can match ASU's depth in this exact niche.",
+    fit: "Nancy Grimm is a National Academy of Sciences member and one of the world's foremost urban ecosystem ecologists — her work explicitly combines urban ecohydrology, stream biogeochemistry, and climate adaptation in urban systems. Diane Pataki recently moved to ASU and leads an urban forest ecohydrology program studying tree water use, urban irrigation, urban CO2, and urban forestry under climate change. Enrique Vivoni covers dryland ecohydrology and hydrological modeling. The three together cover your interests almost perfectly.",
+    faculty: [
+      { name: "Nancy Grimm", focus: "Biogeochemistry, urban ecohydrology, stream-groundwater interactions, climate adaptation in urban systems, CAP LTER", standout: true, reason: "National Academy of Sciences member and founding figure of urban ecohydrology. Her work on urban stream biogeochemistry and climate adaptation in cities is foundational. Decades of data from the CAP LTER." },
+      { name: "Diane Pataki", focus: "Urban forest ecohydrology, urban tree transpiration, urban CO2 emissions, urban biodiversity, urban water management, climate change", standout: true, reason: "The leading researcher in the US on urban tree water use and urban forest ecohydrology. James B. Macelwane Medalist, AAAS Fellow, ESA Fellow. Her program directly addresses the water and carbon cycles of urban forests under climate change." },
+      { name: "Enrique Vivoni", focus: "Dryland ecohydrology, hydrological modeling, land-atmosphere interactions, remote sensing, climate change", standout: false },
+      { name: "Daniel Childers", focus: "Wetland and urban ecosystem ecology, biogeochemistry, ecosystem services, climate", standout: false }
+    ]
+  },
+  {
+    school: "Stanford University",
+    program: "PhD in Earth System Science (ESS) or E-IPER",
+    location: "Stanford (Palo Alto), CA",
+    tier: "reach", ca: true, standout: false,
+    why: "Stanford ESS and E-IPER are elite entry points. Palo Alto is suburban Bay Area — not rural. Best fit for quantitative ecohydrology with a climate or remote sensing angle. E-IPER's interdisciplinary structure can bridge ecology, hydrology, and urban policy.",
+    fit: "Alexandra Konings runs the only lab in the world dedicated to remote sensing ecohydrology at global scale — plant water status, vegetation-water feedbacks, drought. Rob Jackson bridges global change ecology, carbon-water cycles, and nature-based solutions. The E-IPER track allows bridging to urban policy if needed.",
+    faculty: [
+      { name: "Alexandra Konings", focus: "Remote sensing ecohydrology, plant water status, vegetation-water feedbacks, drought, climate change", standout: true, reason: "Runs one of the only labs in the world dedicated to remote sensing ecohydrology at global scale — a rare methodological niche with direct climate and water stress relevance." },
+      { name: "Rob Jackson", focus: "Global change ecology, biogeochemistry, carbon and water cycles, dryland ecosystems, nature-based climate solutions", standout: false },
+      { name: "Steven Gorelick", focus: "Hydrology, water resources, ecohydrology, groundwater-surface water interactions", standout: false }
+    ]
+  },
+  {
+    school: "University of Washington",
+    program: "PhD in Environmental & Forest Sciences (SEFS) or Urban Planning",
+    location: "Seattle, WA",
+    tier: "target", ca: false, standout: false,
+    why: "Seattle is a major metro with an exceptional urban forestry and urban ecology program. SEFS has dedicated urban forestry and watershed ecohydrology tracks. The Pacific Northwest forest systems directly parallel California systems under climate change, and Seattle's tree canopy management challenges are nationally recognized.",
+    fit: "The SEFS Urban Forestry track is one of the few dedicated PhD tracks in urban forestry in the country. Faculty work on urban tree canopy, urban forest management under climate change, and urban heat mitigation. The SEFS Forest Hydrology group covers ecohydrology and watershed response to climate and disturbance.",
+    faculty: [
+      { name: "Sarah Minson / SEFS Urban Forestry faculty", focus: "Urban forest ecology, urban tree canopy, urban biodiversity, stormwater management", standout: false },
+      { name: "Christian Torgersen (USGS affiliate)", focus: "Landscape ecology, aquatic-riparian ecology, remote sensing, climate change impacts", standout: false },
+      { name: "Jonathan Bakker", focus: "Plant community ecology, disturbance, restoration, climate change", standout: false }
+    ]
+  },
+  {
+    school: "Columbia University (GSAPP / Earth Institute)",
+    program: "PhD in Ecology, Evolution & Environmental Biology or Urban Planning",
+    location: "New York, NY",
+    tier: "reach", ca: false, standout: false,
+    why: "Columbia's E3B program and the Earth Institute offer interdisciplinary paths through urban ecology, ecohydrology, and climate adaptation in cities. New York City is the ultimate non-rural setting, and Columbia has deep ties to urban sustainability research through the Earth Institute.",
+    fit: "Best if your interests include urban ecology at the global or policy scale alongside ecohydrology. The NYC urban forest and green infrastructure provide rich fieldwork. Faculty in E3B work on ecosystem responses to urbanization and climate change.",
+    faculty: [
+      { name: "Matthew Palmer", focus: "Urban ecology, ecosystem ecology, plant communities, disturbance and restoration in urban systems", standout: false },
+      { name: "Shahid Naeem", focus: "Biodiversity and ecosystem functioning, urban biodiversity, climate change impacts on ecosystems", standout: false }
+    ]
+  },
+  {
+    school: "Penn State University",
+    program: "PhD in Ecology (Intercollege) or Ecosystem Science & Management",
+    location: "State College, PA",
+    tier: "target", ca: false, standout: false,
+    why: "Penn State has dedicated urban forestry and watershed ecohydrology faculty with active NSF funding and explicit PhD openings. Lauren McPhillips leads urban ecohydrology (stormwater, green infrastructure, hydrology-biogeochemistry) — a direct match. State College is a college town, which may or may not meet your non-rural preference — confirm this is workable before applying.",
+    fit: "Lauren McPhillips is the standout: she runs an urban ecohydrology lab focused on stormwater, green infrastructure, and biogeochemistry of urban watersheds — one of the most direct matches for your interests outside California. Jonathan Duncan's Watershed Ecohydrology lab is also relevant and has active NSF funding with open positions.",
+    faculty: [
+      { name: "Lauren McPhillips", focus: "Urban ecohydrology, stormwater, green infrastructure, hydrology-biogeochemistry of urban watersheds, climate change", standout: true, reason: "One of the few faculty in the US with an explicit urban ecohydrology lab combining stormwater, green infrastructure, and biogeochemistry — direct match for urban ecohydrology interests." },
+      { name: "Jonathan Duncan", focus: "Watershed ecohydrology, biogeochemistry, terrain analysis, water quality, watershed management", standout: false },
+      { name: "Jason Kaye", focus: "Forest ecology, soil biogeochemistry, carbon and nitrogen cycling, climate change", standout: false }
+    ]
+  }
+];
+
+let activeFilter = 'all', openCard = null;
+
+function renderPrograms() {
+  const container = document.getElementById('programs');
+  const filtered = programs.filter(p => {
+    if (activeFilter === 'all') return true;
+    if (activeFilter === 'standout') return p.standout || p.faculty.some(f => f.standout);
+    if (activeFilter === 'ca') return p.ca;
+    return p.tier === activeFilter;
+  });
+  if (!filtered.length) { container.innerHTML = '<div class="no-results">No programs match this filter.</div>'; return; }
+  container.innerHTML = '';
+  const tierLabels = { reach: 'Reach', target: 'Target', safe: 'Likely admit' };
+  const tierClass  = { reach: 'b-reach', target: 'b-target', safe: 'b-safe' };
+  filtered.forEach((p, i) => {
+    const id = 'card-' + i;
+    const hasStandout = p.standout || p.faculty.some(f => f.standout);
+    const card = document.createElement('div');
+    card.className = 'card' + (hasStandout ? ' is-standout' : '');
+    card.innerHTML = `
+      <div class="card-top" onclick="toggle('${id}')">
+        <div class="card-left">
+          <div class="school-name">${p.school}</div>
+          <div class="program-name">${p.program}</div>
+          <div class="badges">
+            <span class="badge ${tierClass[p.tier]}">${tierLabels[p.tier]}</span>
+            <span class="badge ${p.ca ? 'b-ca' : 'b-us'}">${p.ca ? 'California' : 'Out of state'}</span>
+            ${hasStandout ? '<span class="badge b-standout">Standout</span>' : ''}
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <span class="meta">${p.location}</span>
+          <span class="chevron" id="chev-${id}">▶</span>
+        </div>
+      </div>
+      <div class="card-detail" id="${id}">
+        <div class="detail-section"><div class="detail-label">Why this program</div><div class="detail-text">${p.why}</div></div>
+        <div class="detail-section"><div class="detail-label">Fit for your interests</div><div class="detail-text">${p.fit}</div></div>
+        <div class="detail-section">
+          <div class="detail-label">Faculty to research</div>
+          <div class="faculty-list">
+            ${p.faculty.map(f => `<div class="faculty-item${f.standout ? ' is-standout-faculty' : ''}"><span class="faculty-name">${f.name}${f.standout ? ' ✦' : ''}</span> — ${f.focus}${f.standout && f.reason ? `<div class="standout-reason">${f.reason}</div>` : ''}</div>`).join('')}
+          </div>
+        </div>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+function toggle(id) {
+  const detail = document.getElementById(id), chev = document.getElementById('chev-' + id);
+  const isOpen = detail.classList.contains('open');
+  if (openCard && openCard !== id) {
+    document.getElementById(openCard).classList.remove('open');
+    document.getElementById('chev-' + openCard).classList.remove('open');
+  }
+  detail.classList.toggle('open', !isOpen);
+  chev.classList.toggle('open', !isOpen);
+  openCard = !isOpen ? id : null;
+}
+
+document.getElementById('filters').addEventListener('click', e => {
+  if (!e.target.matches('.filter-btn')) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  activeFilter = e.target.dataset.filter;
+  openCard = null;
+  renderPrograms();
+});
+
+renderPrograms();
+</script>
+</body>
+</html>
