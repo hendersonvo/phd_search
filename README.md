@@ -4,4 +4,6 @@
 
 [Programs](code/phd_programs_urban_eco.html)
 
+[Old programs](phd_programs_standouts.html)
+
 [Outreach](code/faculty_outreach_urban_eco.html)
